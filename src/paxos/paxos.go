@@ -30,7 +30,7 @@ import "fmt"
 import "math/rand"
 import "math"
 import "time"
-
+import "rpcplus"
 
 type Paxos struct {
   mu sync.RWMutex
@@ -233,7 +233,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 			if i == px.me {
 				px.Prepare(args, &reply)
 			} else {
-				ok = call(peer, "Paxos.Prepare", args, &reply)
+				ok = call(peer, "Paxos.Prepare", args, &reply, string(px.me))
 			}
 			if ok {
 				if reply.Ok {
@@ -269,7 +269,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 				if i == px.me {
 					px.Accept(args, &reply)
 				} else {
-					ok = call(peer, "Paxos.Accept", args, &reply)
+					ok = call(peer, "Paxos.Accept", args, &reply, string(px.me))
 				}
 				if ok {
 					if reply.Ok {
@@ -299,7 +299,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 						args.Seq = seq
 						args.Value = value
 						var reply DecidedReply
-						call(peer, "Paxos.Decided", args, &reply)
+						call(peer, "Paxos.Decided", args, &reply, string(px.me))
 					}
 				}
 			}
@@ -331,8 +331,8 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 // please use call() to send all RPCs, in client.go and server.go.
 // please do not change this function.
 //
-func call(srv string, name string, args interface{}, reply interface{}) bool {
-  c, err := rpc.Dial("unix", srv)
+func call(srv string, name string, args interface{}, reply interface{}, me string) bool {
+  c, err := rpcplus.Dial("unix", srv, me)
   if err != nil {
     err1 := err.(*net.OpError)
     if err1.Err != syscall.ENOENT && err1.Err != syscall.ECONNREFUSED {
@@ -517,7 +517,10 @@ func (px *Paxos) Kill() {
 // the ports of all the paxos peers (including this one)
 // are in peers[]. this servers port is peers[me].
 //
-func Make(peers []string, me int, rpcs *rpc.Server) *Paxos {
+func Make(clusterName string, peers []string, me int, rpcs *rpc.Server) *Paxos {
+
+  rpcplus.SetClusterName(clusterName);
+
   px := &Paxos{}
   px.peers = peers
   px.me = me
@@ -547,10 +550,10 @@ func Make(peers []string, me int, rpcs *rpc.Server) *Paxos {
       log.Fatal("listen error: ", e);
     }
     px.l = l
-    
+
     // please do not change any of the following code,
     // or do anything to subvert it.
-    
+
     // create a thread to accept RPC connections
     go func() {
       for px.dead == false {
