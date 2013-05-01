@@ -2,7 +2,6 @@ package rpcplus
 
 import (
 	"net/rpc"
-	"os"
 )
 
 
