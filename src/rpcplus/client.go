@@ -56,14 +56,15 @@ func Dial(network, address string, me string) (*ClientPlus, error) {
    rpcLog.clientPlus = &ClientPlus{c, address}
 
    rpcLog.me = me
+   /*
    if rpcLog.w == nil {
-     fo, err := os.Create("data.js")
+     fo, err := os.Create("data.j")
      if err != nil { panic(err) }
      _, err = io.WriteString(fo, "var data =[")
      if err != nil { panic(err) }
      rpcLog.w = bufio.NewWriter(fo)
    }
-
+   */
    return rpcLog.clientPlus, err
 }
 
@@ -80,7 +81,7 @@ func (clientPlus *ClientPlus) Call(serviceMethod string, args interface{}, reply
 
   rpcLog.w.Write(buf);
   rpcLog.w.Write([]byte(","))
-	pcLog.w.Flush()
+	rpcLog.w.Flush()
 
   return err
 }
@@ -92,6 +93,11 @@ func (clientPlus *ClientPlus) Close() error {
 }
 
 
-func SetClusterName(name string) {
+func SetupLogging(name string, logFilePath string) {
   rpcLog.name = name
+  fo, err := os.Create(logFilePath)
+  if err != nil { panic(err) }
+  _, err = io.WriteString(fo, "var data =[")
+  if err != nil { panic(err) }
+  rpcLog.w = bufio.NewWriter(fo)
 }

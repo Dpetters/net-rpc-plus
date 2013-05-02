@@ -519,7 +519,7 @@ func (px *Paxos) Kill() {
 //
 func Make(clusterName string, peers []string, me int, rpcs *rpc.Server) *Paxos {
 
-  rpcplus.SetClusterName(clusterName);
+  rpcplus.SetupLogging(clusterName, "../paxos/demo/js/data.js");
 
   px := &Paxos{}
   px.peers = peers
