@@ -1,13 +1,14 @@
 package rpcplus
 
 import (
-  "encoding/json"
+  //"encoding/json"
   "bufio"
-  "os"
+  //"os"
 	"net/rpc"
   "container/list"
   "time"
   "sync"
+  "runtime"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +24,7 @@ type RpcLog struct {
   me string
   mu sync.Mutex
 	rpcLogEntries *list.List
-  clientPlus ClientPlus
+  clientPlus *ClientPlus
   name string
   w *bufio.Writer
 }
@@ -38,29 +39,39 @@ type RpcLogEntry struct {
 }
 
 func MakeRpcLog(blah string) *RpcLog {
-	rpcLog := new(RpcLog)
-	rpcLog.rpcLogEntries = list.New()
+  rpcLog := new(RpcLog)
+  //rpcLog.rpcLogEntries = list.New()
 	return rpcLog
 }
 
-var rpcLog = MakeRpcLog("yo")
+var rpcLog *RpcLog;//MakeRpcLog("yo")
 
 
 func Dial(network, address string, me string) (*ClientPlus, error) {
    c, err := rpc.Dial(network, address)
-   rpcLog.clientPlus = ClientPlus{c, address}
+
+   if rpcLog == nil {
+     rpcLog = MakeRpcLog("yo")
+
+   }
+
+   if rpcLog.clientPlus == nil {
+     rpcLog.clientPlus = &ClientPlus{c, address}
+   }
+   /*
    rpcLog.me = me
    if rpcLog.w == nil {
      fo, err := os.Create("log.json")
      if err != nil { panic(err) }
      rpcLog.w = bufio.NewWriter(fo)
    }
-   return &rpcLog.clientPlus, err
+   */
+   return rpcLog.clientPlus, err
 }
 
 
 func (client *ClientPlus) Call(serviceMethod string, args interface{}, reply interface{}) error {
-
+  /*
   if(rpcLog.rpcLogEntries.Len() == 100) {
     rpcLog.mu.Lock()
 
@@ -73,24 +84,32 @@ func (client *ClientPlus) Call(serviceMethod string, args interface{}, reply int
     rpcLog.rpcLogEntries = list.New()
     rpcLog.mu.Unlock()
   }
+  */
 
-
-	startTime := time.Now()
+	//startTime := time.Now()
 	err := client.Call(serviceMethod, args, reply)
-	finishTime := time.Now()
+	//finishTime := time.Now()
 
-  rpcLogEntry := RpcLogEntry{rpcLog.me, client.destinationAddress, startTime, finishTime, args, reply}
-  rpcLog.rpcLogEntries.PushFront(rpcLogEntry)
+  //rpcLogEntry := RpcLogEntry{rpcLog.me, client.destinationAddress, startTime, finishTime, args, reply}
+  //rpcLogEntry = rpcLogEntry
+  //rpcLog.rpcLogEntries.PushFront(rpcLogEntry)
 
   return err
 }
 
 
 func (client *ClientPlus) Close() error {
-  return client.client.Close();
+  err := client.client.Close();
+  rpcLog.clientPlus = nil
+  runtime.GC()
+  return err
 }
 
 
 func SetClusterName(name string) {
+  if rpcLog == nil {
+     rpcLog = MakeRpcLog("yo")
+
+  }
   rpcLog.name = name
 }
