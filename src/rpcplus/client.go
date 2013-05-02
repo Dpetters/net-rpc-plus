@@ -1,7 +1,9 @@
 package rpcplus
 
 import (
-  //"encoding/json"
+  "encoding/json"
+  "bufio"
+  "os"
 	"net/rpc"
   "container/list"
   "time"
@@ -20,9 +22,10 @@ type ClientPlus struct {
 type RpcLog struct {
   me string
   mu sync.Mutex
-	rpcLogEntries list.List
+	rpcLogEntries *list.List
   clientPlus ClientPlus
   name string
+  w *bufio.Writer
 }
 
 type RpcLogEntry struct {
@@ -36,7 +39,7 @@ type RpcLogEntry struct {
 
 func MakeRpcLog(blah string) *RpcLog {
 	rpcLog := new(RpcLog)
-	rpcLog.rpcLogEntries = *list.New()
+	rpcLog.rpcLogEntries = list.New()
 	return rpcLog
 }
 
@@ -47,6 +50,11 @@ func Dial(network, address string, me string) (*ClientPlus, error) {
    c, err := rpc.Dial(network, address)
    rpcLog.clientPlus = ClientPlus{c, address}
    rpcLog.me = me
+   if rpcLog.w == nil {
+     fo, err := os.Create("log.json")
+     if err != nil { panic(err) }
+     rpcLog.w = bufio.NewWriter(fo)
+   }
    return &rpcLog.clientPlus, err
 }
 
@@ -55,10 +63,17 @@ func (client *ClientPlus) Call(serviceMethod string, args interface{}, reply int
 
   if(rpcLog.rpcLogEntries.Len() == 100) {
     rpcLog.mu.Lock()
-    //_, err := json.Marshal(rpcLog.rpcLogEntries)
-    rpcLog.rpcLogEntries = *list.New()
+
+    buf, err := json.Marshal(rpcLog.rpcLogEntries)
+    if err != nil { panic(err) }
+
+    _, err2 := rpcLog.w.Write(buf);
+    if err2 != nil { panic(err2) }
+
+    rpcLog.rpcLogEntries = list.New()
     rpcLog.mu.Unlock()
   }
+
 
 	startTime := time.Now()
 	err := client.Call(serviceMethod, args, reply)
