@@ -31,6 +31,7 @@ import "math/rand"
 import "math"
 import "time"
 import "rpcplus"
+import "strconv"
 
 type Paxos struct {
   mu sync.RWMutex

@@ -5,7 +5,7 @@ package shardmaster
 // Please don't change this file.
 //
 
-import "rpcplus"
+import "net/rpc"
 import "time"
 
 type Clerk struct {
@@ -36,7 +36,7 @@ func MakeClerk(servers []string) *Clerk {
 //
 func call(srv string, rpcname string,
           args interface{}, reply interface{}) bool {
-  c, errx := rpcplus.Dial("unix", srv)
+  c, errx := rpc.Dial("unix", srv)
   if errx != nil {
     return false
   }
