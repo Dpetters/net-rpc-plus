@@ -30,8 +30,8 @@ import "fmt"
 import "math/rand"
 import "math"
 import "time"
+import "strings"
 import "rpcplus"
-import "strconv"
 
 type Paxos struct {
   mu sync.RWMutex
@@ -234,7 +234,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 			if i == px.me {
 				px.Prepare(args, &reply)
 			} else {
-				ok = call(peer, "Paxos.Prepare", args, &reply, string(px.me))
+				ok = call(peer, "Paxos.Prepare", args, &reply)
 			}
 			if ok {
 				if reply.Ok {
@@ -270,7 +270,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 				if i == px.me {
 					px.Accept(args, &reply)
 				} else {
-					ok = call(peer, "Paxos.Accept", args, &reply, string(px.me))
+					ok = call(peer, "Paxos.Accept", args, &reply)
 				}
 				if ok {
 					if reply.Ok {
@@ -300,7 +300,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 						args.Seq = seq
 						args.Value = value
 						var reply DecidedReply
-						call(peer, "Paxos.Decided", args, &reply, string(px.me))
+						call(peer, "Paxos.Decided", args, &reply)
 					}
 				}
 			}
@@ -332,8 +332,8 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 // please use call() to send all RPCs, in client.go and server.go.
 // please do not change this function.
 //
-func call(srv string, name string, args interface{}, reply interface{}, me string) bool {
-  c, err := rpcplus.Dial("unix", srv, me)
+func call(srv string, name string, args interface{}, reply interface{}) bool {
+  c, err := rpcplus.Dial("unix", srv)
   if err != nil {
     err1 := err.(*net.OpError)
     if err1.Err != syscall.ENOENT && err1.Err != syscall.ECONNREFUSED {
@@ -520,7 +520,7 @@ func (px *Paxos) Kill() {
 //
 func Make(clusterName string, peers []string, me int, rpcs *rpc.Server) *Paxos {
 
-  rpcplus.SetupLogging(clusterName, "../paxos/demo/js/data.js");
+  rpcplus.SetupLogging(clusterName, "logs/log-" + strings.Replace(string(peers[me]), "/", "_", -1) + ".json", string(peers[me]));
 
   px := &Paxos{}
   px.peers = peers

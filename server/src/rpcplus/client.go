@@ -21,7 +21,7 @@ type ClientPlus struct {
 }
 
 type RpcLog struct {
-  me string
+  myAddress string
   mu sync.Mutex
 	rpcLogEntries *list.List
   clientPlus *ClientPlus
@@ -50,12 +50,10 @@ func MakeRpcLog(blah string) *RpcLog {
 }
 
 
-func Dial(network, address string, me string) (*ClientPlus, error) {
+func Dial(network, address string) (*ClientPlus, error) {
    c, err := rpc.Dial(network, address)
 
    rpcLog.clientPlus = &ClientPlus{c, address}
-
-   rpcLog.me = me
    /*
    if rpcLog.w == nil {
      fo, err := os.Create("data.j")
@@ -74,7 +72,7 @@ func (clientPlus *ClientPlus) Call(serviceMethod string, args interface{}, reply
 	err := clientPlus.client.Call(serviceMethod, args, reply)
 	finishTime := time.Now()
 
-  rpcLogEntry := RpcLogEntry{rpcLog.me, clientPlus.destinationAddress, serviceMethod, startTime, finishTime, args, reply}
+  rpcLogEntry := RpcLogEntry{rpcLog.myAddress, clientPlus.destinationAddress, serviceMethod, startTime, finishTime, args, reply}
 
 	buf, err := json.Marshal(rpcLogEntry)
   if err != nil { panic(err) }
@@ -93,11 +91,12 @@ func (clientPlus *ClientPlus) Close() error {
 }
 
 
-func SetupLogging(name string, logFilePath string) {
+func SetupLogging(name string, logFilePath string, myAddress string) {
   rpcLog.name = name
+  rpcLog.myAddress = myAddress
   fo, err := os.Create(logFilePath)
   if err != nil { panic(err) }
-  _, err = io.WriteString(fo, "var data =[")
+  _, err = io.WriteString(fo, "[")
   if err != nil { panic(err) }
   rpcLog.w = bufio.NewWriter(fo)
 }

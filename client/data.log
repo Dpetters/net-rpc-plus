@@ -1,0 +1,182 @@
+[
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-0",
+        "ServiceMethod": "Paxos.Prepare",
+        "StartTime": "2013-05-02T12:23:18.099791-04:00",
+        "FinishTime": "2013-05-02T12:23:18.105293-04:00",
+        "Args": {
+            "Seq": 0,
+            "ProposalNum": 1,
+            "Them": 1,
+            "DoneValue": -1
+        },
+        "Reply": {
+            "Ok": true,
+            "HighestProposal": 0,
+            "HighestAccept": {
+                "ProposalNum": -1,
+                "Value": null
+            }
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-0",
+        "ServiceMethod": "Paxos.Prepare",
+        "StartTime": "2013-05-02T12:23:18.10017-04:00",
+        "FinishTime": "2013-05-02T12:23:18.105802-04:00",
+        "Args": {
+            "Seq": 0,
+            "ProposalNum": 2,
+            "Them": 2,
+            "DoneValue": -1
+        },
+        "Reply": {
+            "Ok": true,
+            "HighestProposal": 0,
+            "HighestAccept": {
+                "ProposalNum": -1,
+                "Value": null
+            }
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-2",
+        "ServiceMethod": "Paxos.Prepare",
+        "StartTime": "2013-05-02T12:23:18.105812-04:00",
+        "FinishTime": "2013-05-02T12:23:18.107439-04:00",
+        "Args": {
+            "Seq": 0,
+            "ProposalNum": 1,
+            "Them": 1,
+            "DoneValue": -1
+        },
+        "Reply": {
+            "Ok": true,
+            "HighestProposal": 0,
+            "HighestAccept": {
+                "ProposalNum": -1,
+                "Value": null
+            }
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-1",
+        "ServiceMethod": "Paxos.Prepare",
+        "StartTime": "2013-05-02T12:23:18.106048-04:00",
+        "FinishTime": "2013-05-02T12:23:18.107886-04:00",
+        "Args": {
+            "Seq": 0,
+            "ProposalNum": 2,
+            "Them": 2,
+            "DoneValue": -1
+        },
+        "Reply": {
+            "Ok": true,
+            "HighestProposal": 0,
+            "HighestAccept": {
+                "ProposalNum": -1,
+                "Value": null
+            }
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-0",
+        "ServiceMethod": "Paxos.Accept",
+        "StartTime": "2013-05-02T12:23:18.107982-04:00",
+        "FinishTime": "2013-05-02T12:23:18.109337-04:00",
+        "Args": {
+            "Seq": 0,
+            "AcceptValue": {
+                "ProposalNum": 1,
+                "Value": {
+                    "RequestType": 0,
+                    "GID": 1001,
+                    "Servers": "a;b;c",
+                    "Shard": 0,
+                    "Num": 0
+                }
+            }
+        },
+        "Reply": {
+            "ProposalNum": 0,
+            "Ok": false
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-0",
+        "ServiceMethod": "Paxos.Accept",
+        "StartTime": "2013-05-02T12:23:18.108248-04:00",
+        "FinishTime": "2013-05-02T12:23:18.109425-04:00",
+        "Args": {
+            "Seq": 0,
+            "AcceptValue": {
+                "ProposalNum": 2,
+                "Value": {
+                    "RequestType": 0,
+                    "GID": 1004,
+                    "Servers": "a;b;c",
+                    "Shard": 0,
+                    "Num": 0
+                }
+            }
+        },
+        "Reply": {
+            "ProposalNum": 2,
+            "Ok": true
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-1",
+        "ServiceMethod": "Paxos.Accept",
+        "StartTime": "2013-05-02T12:23:18.10954-04:00",
+        "FinishTime": "2013-05-02T12:23:18.110651-04:00",
+        "Args": {
+            "Seq": 0,
+            "AcceptValue": {
+                "ProposalNum": 2,
+                "Value": {
+                    "RequestType": 0,
+                    "GID": 1004,
+                    "Servers": "a;b;c",
+                    "Shard": 0,
+                    "Num": 0
+                }
+            }
+        },
+        "Reply": {
+            "ProposalNum": 2,
+            "Ok": true
+        }
+    },
+    {
+        "SourceAddress": "\u0002",
+        "DestinationAddress": "/var/tmp/824-1000/sm-16344-unrel-1",
+        "ServiceMethod": "Paxos.Accept",
+        "StartTime": "2013-05-02T12:23:18.10954-04:00",
+        "FinishTime": "2013-05-02T12:23:18.110651-04:00",
+        "Args": {
+            "Seq": 0,
+            "AcceptValue": {
+                "ProposalNum": 2,
+                "Value": {
+                    "RequestType": 0,
+                    "GID": 1004,
+                    "Servers": "a;b;c",
+                    "Shard": 0,
+                    "Num": 0
+                }
+            }
+        },
+        "Reply": {
+            "ProposalNum": 2,
+            "Ok": true
+        }
+    }
+]
