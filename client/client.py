@@ -32,25 +32,12 @@ def main(args):
 
   requests = []
 
-  for filename in filenames:
-    """
-    # append closing bracket
-    f = open(args[0] + filename, 'r+')
-    f.seek(-2,2)
-    f.write(']')
-    f.close()
-
-     
-    call(["sed", "-ie", "'s/,$//'", args[0] + filename])
-
-    f = open(args[0] + filename, 'a')
-    f.write(']')
-    f.close()
-    """
+  for filename in logFiles:
     # get the json data
     json_data=open(args[0] + filename)
     requests.extend(json.load(json_data))
    
+  requests = sorted(requests, key=lambda x: x["StartTime"])
 
   # write to file
   diag_file = open("log.diag", 'w')
