@@ -95,7 +95,7 @@ func (clientPlus *ClientPlus) Close(clusterName string) error {
 func SetupLogging(name string, logFilePath string, myAddress string) {
 	files, err := ioutil.ReadDir("logs")
 	if err != nil {
-	  os.Mkdir("logs", 0644)
+	  os.Mkdir("logs", 0744)
 	}
 
 	// Try to group files from a unique test run together in a single
@@ -114,7 +114,7 @@ func SetupLogging(name string, logFilePath string, myAddress string) {
 	}
 	if closeDir == "" {
 		closeDir = time.Now().Format(time.UnixDate)
-		os.Mkdir("logs/" + closeDir, 0644)
+		os.Mkdir("logs/" + closeDir, 0744)
 	}
 
 
