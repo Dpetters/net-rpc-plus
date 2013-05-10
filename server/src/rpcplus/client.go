@@ -9,6 +9,7 @@ import (
 	"os"
 	"io"
 	"bufio"
+	"io/ioutil"
 )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,11 +93,36 @@ func (clientPlus *ClientPlus) Close(clusterName string) error {
 
 
 func SetupLogging(name string, logFilePath string, myAddress string) {
+	files, err := ioutil.ReadDir("logs")
+	if err != nil {
+		log.Panic("No logs dir!")
+	}
+
+	// Try to group files from a unique test run together in a single
+	// directory.
+	closeDir := ""
+	for i := 0; i < len(files); i++ {
+		fileInfo := files[i]
+		if fileInfo.IsDir() {
+			duration, err := time.Parse(time.UnixDate, fileInfo.Name())
+			if err == nil {
+				if time.Since(duration) <= (time.Duration(1) * time.Second) {
+					closeDir = fileInfo.Name()
+				}
+			}
+		}
+	}
+	if closeDir == "" {
+		closeDir = time.Now().Format(time.UnixDate)
+		os.Mkdir("logs/" + closeDir, 0644)
+	}
+
+
 	if _, ok := rpcLogs[myAddress]; !ok {
 		rpcLog := &RpcLog{}
 		rpcLog.name = name
 		rpcLog.first = true
-		fo, err := os.Create(logFilePath)
+		fo, err := os.Create("logs/" + closeDir + "/" + logFilePath)
 		if err != nil { panic(err) }
 		_, err = io.WriteString(fo, "[")
 		if err != nil { panic(err) }
