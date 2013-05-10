@@ -521,7 +521,7 @@ func (px *Paxos) Kill() {
 //
 func Make(clusterName string, peers []string, me int, rpcs *rpc.Server) *Paxos {
 
-  rpcplus.SetupLogging(clusterName, "logs/log-" + strings.Replace(string(peers[me]), "/", "_", -1) + ".json", string(peers[me]));
+  rpcplus.SetupLogging(clusterName, "log-" + strings.Replace(string(peers[me]), "/", "_", -1) + ".json", string(peers[me]));
 
   px := &Paxos{}
   px.peers = peers
