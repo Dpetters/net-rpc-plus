@@ -95,7 +95,7 @@ func (clientPlus *ClientPlus) Close(clusterName string) error {
 func SetupLogging(name string, logFilePath string, myAddress string) {
 	files, err := ioutil.ReadDir("logs")
 	if err != nil {
-		log.Panic("No logs dir!")
+	  os.Mkdir("logs", 0644)
 	}
 
 	// Try to group files from a unique test run together in a single
