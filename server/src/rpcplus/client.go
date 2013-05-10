@@ -36,6 +36,7 @@ type RpcLogEntry struct {
   FinishTime time.Time
   Args interface{}
   Reply interface{}
+	Status error
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ func (clientPlus *ClientPlus) Call(myAddress string, serviceMethod string, args 
 	finishTime := time.Now()
 
 	if rpcLog, ok := rpcLogs[myAddress]; ok {
-		rpcLogEntry := RpcLogEntry{myAddress, clientPlus.destinationAddress, serviceMethod, startTime, finishTime, args, reply}
+		rpcLogEntry := RpcLogEntry{myAddress, clientPlus.destinationAddress, serviceMethod, startTime, finishTime, args, reply, err}
 
 		buf, err2 := json.Marshal(rpcLogEntry)
 		if err2 != nil { panic(err2) }
