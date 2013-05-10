@@ -234,7 +234,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 			if i == px.me {
 				px.Prepare(args, &reply)
 			} else {
-				ok = call(peer, "Paxos.Prepare", args, &reply)
+				ok = call(px.peers[px.me], peer, "Paxos.Prepare", args, &reply)
 			}
 			if ok {
 				if reply.Ok {
@@ -270,7 +270,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 				if i == px.me {
 					px.Accept(args, &reply)
 				} else {
-					ok = call(peer, "Paxos.Accept", args, &reply)
+					ok = call(px.peers[px.me], peer, "Paxos.Accept", args, &reply)
 				}
 				if ok {
 					if reply.Ok {
@@ -300,7 +300,7 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 						args.Seq = seq
 						args.Value = value
 						var reply DecidedReply
-						call(peer, "Paxos.Decided", args, &reply)
+						call(px.peers[px.me], peer, "Paxos.Decided", args, &reply)
 					}
 				}
 			}
@@ -332,8 +332,8 @@ func (px *Paxos) Propose(seq int, v interface{}) {
 // please use call() to send all RPCs, in client.go and server.go.
 // please do not change this function.
 //
-func call(srv string, name string, args interface{}, reply interface{}) bool {
-  c, err := rpcplus.Dial("unix", srv)
+func call(clusterName string, srv string, name string, args interface{}, reply interface{}) bool {
+  c, err := rpcplus.Dial(clusterName, "unix", srv)
   if err != nil {
     err1 := err.(*net.OpError)
     if err1.Err != syscall.ENOENT && err1.Err != syscall.ECONNREFUSED {
@@ -341,9 +341,9 @@ func call(srv string, name string, args interface{}, reply interface{}) bool {
     }
     return false
   }
-  defer c.Close()
+  defer c.Close(clusterName)
     
-  err = c.Call(name, args, reply)
+  err = c.Call(clusterName, name, args, reply)
   if err == nil {
     return true
   }
@@ -511,6 +511,7 @@ func (px *Paxos) Kill() {
   if px.l != nil {
     px.l.Close()
   }
+	rpcplus.Done(px.peers[px.me])
 }
 
 //
