@@ -1,6 +1,8 @@
+from subprocess import call
+
 import json
+import os
 import pprint
-import sys
 
 
 def getRequestDiag(request):
@@ -22,17 +24,50 @@ def getResponseDiag(request):
   diag += ";\n"
   return diag
 
-# get the json data
-json_data=open(sys.argv[1])
-data = json.load(json_data)
+def main(args):
+  logFiles = []
+  for (dirpath, dirname, filenames) in os.walk(args[0]):
+    logFiles.extend(filenames)
+    break
 
-# write to file
-diag_file = open("log.diag", 'w')
-diag_file.write("seqdiag {\n")
+  requests = []
 
-for request in data:
-  diag_file.write(getRequestDiag(request))
-  diag_file.write(getResponseDiag(request))
-  diag_file.write("\n")
+  for filename in filenames:
+    """
+    # append closing bracket
+    f = open(args[0] + filename, 'r+')
+    f.seek(-2,2)
+    f.write(']')
+    f.close()
 
-diag_file.write("}\n")
+     
+    call(["sed", "-ie", "'s/,$//'", args[0] + filename])
+
+    f = open(args[0] + filename, 'a')
+    f.write(']')
+    f.close()
+    """
+    # get the json data
+    json_data=open(args[0] + filename)
+    requests.extend(json.load(json_data))
+   
+
+  # write to file
+  diag_file = open("log.diag", 'w')
+  diag_file.write("seqdiag {\n")
+
+  for request in requests:
+    diag_file.write(getRequestDiag(request))
+    diag_file.write(getResponseDiag(request))
+    diag_file.write("\n")
+
+  diag_file.write("}\n")
+
+  diag_file.close()
+
+  call(["seqdiag", "log.diag"])
+
+
+if __name__ == '__main__':
+  import sys
+  main(sys.argv[1:])
