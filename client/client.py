@@ -60,15 +60,15 @@ def main(args):
   # write to file
   diag_file = open("log.diag", 'w')
   diag_file.write("seqdiag {\n")
+  diag_file.write("\tedge_length = 300;")
+  diag_file.write("\tdefault_fontsize = 14;") 
+  diag_file.write("\tdefault_note_color = lightblue;")
+  diag_file.write("\tactivation = none;")
 
   for request in requests:
     diag_file.write(getRequestDiag(request))
     diag_file.write(getResponseDiag(request))
     diag_file.write("\n")
-    diag_file.write("\tedge_length = 300;")
-    diag_file.write("\tdefault_fontsize = 14;") 
-    diag_file.write("\tdefault_note_color = lightblue;")
-    diag_file.write("\tactivation = none;")
 
   diag_file.write("}\n")
 
