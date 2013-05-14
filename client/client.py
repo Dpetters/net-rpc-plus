@@ -11,7 +11,6 @@ def getErr(request):
   return None
 
 def getTime(request):
-  print request["StartTime"]
   return request["StartTime"]
 
 def getRequestDiag(request):
@@ -55,7 +54,7 @@ def main(args):
       # get the json data
       json_data=open(args[0] + filename)
       requests.extend(json.load(json_data))
-  
+
   requests = sorted(requests, key=getTime)
 
   # write to file
